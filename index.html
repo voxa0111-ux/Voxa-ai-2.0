@@ -60,7 +60,7 @@
         <div class="header-actions">
             <select id="model">
                 <option value="groq">⚡ Groq (Fast)</option>
-                <option value="gemini">✨ Gemini 1.5</option>
+                <option value="gemini">✨ Gemini 2.5</option>
             </select>
             <button class="icon-btn" onclick="clearChat()" title="Clear Chat"><i class="fa-solid fa-trash"></i></button>
         </div>
@@ -83,24 +83,16 @@
     </div>
 
     <script>
-        // 🔑 Groq Key (console.groq.com se 'gsk_...' wali key lein)
-const G_P1 = "gsk_AapkiGroqKeyPart1"; 
-const G_P2 = "AapkiGroqKeyPart2";
+        // 🔑 Groq Key (console.groq.com se 'gsk_...' wali key yahan daalein)
+        const G_P1 = "gsk_PehleAadheKeyYahan"; 
+        const G_P2 = "DoosreAadheKeyYahan";
 
-// 🔑 Gemini Key (aistudio.google.com se naye project mein banayein)  
+        // 🔑 Gemini Key
         const GEM_P1 = "AQ.Ab8RN6K92tF-ZjlDu7P4KZuF"; 
         const GEM_P2 = "Hd1y-I0hFuqyj1C_Fs0h6WOBZQ";
 
-const GROQ_KEY = G_P1 + G_P2;
-const GEMINI_KEY = GEM_P1 + GEM_P2;
-
-// ... send() function ke andar Gemini URL badlein:
-
-// 👇 PURANI GEMINI URL KI JAGAH YEH NAYI URL LAGAYEIN:
-let apiUrl = model === "groq" 
-    ? "https://api.groq.com/openai/v1/chat/completions" 
-    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
-        
+        const GROQ_KEY = G_P1 + G_P2;
+        const GEMINI_KEY = GEM_P1 + GEM_P2;
 
         // --- Send Message Logic ---
         async function send() {
@@ -148,8 +140,8 @@ let apiUrl = model === "groq"
                         responseText = data.choices?.[0]?.message?.content || "Groq Response Error!";
                     }
                 } else {
-                    // Gemini Fetch Call
-                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
+                    // Gemini Fetch Call (Updated to gemini-2.5-flash)
+                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
