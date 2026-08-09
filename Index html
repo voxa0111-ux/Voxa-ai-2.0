@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voxa AI</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background-color: #121212; color: #fff; display: flex; flex-direction: column; height: 100vh; }
+        header { background: #1f1f1f; padding: 15px; text-align: center; font-size: 1.3rem; font-weight: bold; border-bottom: 1px solid #333; color: #0084ff; display: flex; justify-content: space-between; align-items: center; }
+        #chat-container { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+        .msg { padding: 12px 16px; border-radius: 15px; max-width: 80%; line-height: 1.4; word-wrap: break-word; }
+        .user { background: #0084ff; align-self: flex-end; color: white; border-bottom-right-radius: 2px; }
+        .bot { background: #262626; align-self: flex-start; color: #e0e0e0; border-bottom-left-radius: 2px; }
+        #input-container { display: flex; padding: 12px; background: #1f1f1f; gap: 10px; border-top: 1px solid #333; }
+        input { flex: 1; padding: 12px 15px; border-radius: 25px; border: 1px solid #444; outline: none; background: #2a2a2a; color: white; font-size: 1rem; }
+        input:focus { border-color: #0084ff; }
+        button { padding: 12px 20px; border-radius: 25px; border: none; background: #0084ff; color: white; font-weight: bold; cursor: pointer; font-size: 0.9rem; }
+        .key-btn { background: #333; font-size: 0.8rem; padding: 6px 12px; border-radius: 8px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <span>🤖 Voxa AI</span>
+        <button class="key-btn" onclick="setApiKey()">🔑 Key Settings</button>
+    </header>
+
+    <div id="chat-container">
+        <div class="msg bot">Haanji! Main Voxa AI hoon. Agar pehli baar use kar rahe hain toh pehle top-right mein 'Key Settings' par click karke API Key save kar lein.</div>
+    </div>
+
+    <div id="input-container">
+        <input type="text" id="userInput" placeholder="Voxa se kuch pucho..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        // API Key local storage se get karein
+        function getSavedKey() {
+            return localStorage.getItem("voxa_gemini_key") || "";
+        }
+
+        function setApiKey() {
+            let key = prompt("Apni Gemini API Key yahan paste karein:", getSavedKey());
+            if (key !== null) {
+                localStorage.setItem("voxa_gemini_key", key.trim());
+                alert("API Key Save ho gayi!");
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === "Enter") {
+                sendMessage();
+            }
+        }
+
+        async function sendMessage() {
+            let API_KEY = getSavedKey();
+            
+            if (!API_KEY) {
+                alert("Pehle Top Right Par 'Key Settings' Par Click Karke Apni API Key Save Karein!");
+                setApiKey();
+                return;
+            }
+
+            let inputField = document.getElementById("userInput");
+            let chatContainer = document.getElementById("chat-container");
+            let text = inputField.value.trim();
+
+            if (!text) return;
+
+            // User message screen par show karein
+            chatContainer.innerHTML += `<div class="msg user">${text}</div>`;
+            inputField.value = "";
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            // Bot Loading State
+            let botMsgDiv = document.createElement("div");
+            botMsgDiv.className = "msg bot";
+            botMsgDiv.innerText = "Soch raha hoon...";
+            chatContainer.appendChild(botMsgDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: text }] }]
+                    })
+                });
+
+                let data = await response.json();
+                
+                if (data.candidates && data.candidates[0].content.parts[0].text) {
+                    let reply = data.candidates[0].content.parts[0].text;
+                    botMsgDiv.innerText = reply;
+                } else {
+                    botMsgDiv.innerText = "API Error: Key check karein ya Key Settings par dubara set karein.";
+                }
+            } catch (error) {
+                botMsgDiv.innerText = "Error: Connection issue ya Invalid API Key.";
+            }
+
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
+
