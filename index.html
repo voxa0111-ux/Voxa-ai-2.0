@@ -83,7 +83,7 @@
     </div>
 
     <script>
-        // 🔑 Groq Key (console.groq.com se 'gsk_...' wali key yahan daalein)
+        // 🔑 Groq Key
         const G_P1 = "gsk_PehleAadheKeyYahan"; 
         const G_P2 = "DoosreAadheKeyYahan";
 
@@ -140,7 +140,7 @@
                         responseText = data.choices?.[0]?.message?.content || "Groq Response Error!";
                     }
                 } else {
-                    // Gemini Fetch Call (Updated to gemini-2.5-flash)
+                    // Gemini API Call (gemini-2.5-flash)
                     let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
@@ -245,4 +245,5 @@
         }
     </script>
 </body>
-</html>
+    </html>
+    
