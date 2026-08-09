@@ -60,7 +60,7 @@
         <div class="header-actions">
             <select id="model">
                 <option value="groq">⚡ Groq (Fast)</option>
-                <option value="gemini">✨ Gemini 2.5</option>
+                <option value="gemini">✨ Gemini 2.0</option>
             </select>
             <button class="icon-btn" onclick="clearChat()" title="Clear Chat"><i class="fa-solid fa-trash"></i></button>
         </div>
@@ -140,9 +140,8 @@
                         responseText = data.choices?.[0]?.message?.content || "Groq Response Error!";
                     }
                 } else {
-                    // Gemini API Call (gemini-2.5-flash)
+                    // Gemini API Call (Fixed to gemini-2.0-flash)
                     let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
-
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
