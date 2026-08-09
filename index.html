@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,13 +83,15 @@
     </div>
 
     <script>
-        // 🔑 GROQ API KEY (2 PARTS):
-        const G_P1 = ""; 
-        const G_P2 = "XErxX5krIfdEEqzO3kV8lt0Dg";
+        // 🔑 GROQ API KEY (2 PARTS MEIN TOD KAR DAALEIN):
+        // Note: Groq Key 'gsk_' se start hoti hai
+        const G_P1 = "gsk_PehleAadheKeyYahan"; 
+        const G_P2 = "DoosreAadheKeyYahan";
 
-        // 🔑 GEMINI API KEY (2 PARTS):
-        const GEM_P1 = "AQ.Ab8RN6LyTCW27TBbSl"; 
-        const GEM_P2 = "Bk_N_JTTpi2ONZqPmETD2f3kAicZMovA";
+        // 🔑 GEMINI API KEY (2 PARTS MEIN TOD KAR DAALEIN):
+        // Note: Gemini Key 'AIzaSy' se start hoti hai!
+        const GEM_P1 = "AIzaSyPehleAadheKeyYahan"; 
+        const GEM_P2 = "DoosreAadheKeyYahan";
 
         const GROQ_KEY = G_P1 + G_P2;
         const GEMINI_KEY = GEM_P1 + GEM_P2;
@@ -135,22 +136,33 @@
                         body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: text }] })
                     });
                     let data = await res.json();
-                    responseText = data.choices?.[0]?.message?.content || "Groq Error!";
+                    if (data.error) {
+                        responseText = "Groq Error: " + data.error.message;
+                    } else {
+                        responseText = data.choices?.[0]?.message?.content || "Groq Response Error!";
+                    }
                 } else {
+                    // Gemini Fetch Call
                     let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
                     });
+
                     let data = await res.json();
-                    responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Gemini Error!";
+
+                    if (data.error) {
+                        responseText = "Gemini Error: " + data.error.message; 
+                    } else {
+                        responseText = data.candidates?.[0]?.content?.parts?.[0]?.text || "Response parse nahi hua.";
+                    }
                 }
 
                 botMsgDiv.innerHTML = formatMarkdown(responseText);
                 actionDiv.style.display = "flex";
 
             } catch (e) {
-                botMsgDiv.innerText = "Network Issue ya Invalid API Key!";
+                botMsgDiv.innerText = "Network Error: " + e.message;
             }
             chat.scrollTop = chat.scrollHeight;
         }
@@ -172,7 +184,7 @@
 
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
-            recognition.lang = 'hi-IN'; // Hindi + English Support
+            recognition.lang = 'hi-IN';
             recognition.interimResults = false;
 
             recognition.onstart = function() {
@@ -199,7 +211,7 @@
         // --- Text-to-Speech (Voice Output) ---
         function speakText(elementId) {
             let text = document.getElementById(elementId).innerText;
-            window.speechSynthesis.cancel(); // Stop ongoing speech
+            window.speechSynthesis.cancel();
             let utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'hi-IN';
             window.speechSynthesis.speak(utterance);
@@ -214,7 +226,7 @@
 
         // --- Clear Chat ---
         function clearChat() {
-            if(confirm("Khabar! Kya aap poori chat saaf karna chahte hain?")) {
+            if(confirm("Kya aap poori chat saaf karna chahte hain?")) {
                 document.getElementById("chat").innerHTML = `
                 <div class="msg-wrapper bot-wrapper">
                     <div class="msg bot">Chat clear ho gayi! Naya sawal puchiye.</div>
@@ -222,7 +234,7 @@
             }
         }
 
-        // --- Basic Code Formatting & Security ---
+        // --- Formatting Helper ---
         function formatMarkdown(text) {
             return text
                 .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')
@@ -235,5 +247,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
