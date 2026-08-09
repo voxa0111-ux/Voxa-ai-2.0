@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Voxa AI - NextGen Assistant</title>
+    <title>Voxa AI Pro - NextGen Assistant</title>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -60,7 +60,9 @@
         <div class="header-actions">
             <select id="model">
                 <option value="groq">⚡ Groq (Fast)</option>
-                <option value="gemini">✨ Gemini 2.0</option>
+                <option value="gemini-3.6">✨ Gemini 3.6 Flash</option>
+                <option value="gemini-3.5">✨ Gemini 3.5 Flash</option>
+                <option value="gemini-lite">💨 Gemini 3.5 Flash-Lite</option>
             </select>
             <button class="icon-btn" onclick="clearChat()" title="Clear Chat"><i class="fa-solid fa-trash"></i></button>
         </div>
@@ -69,7 +71,7 @@
     <div id="chat">
         <div class="msg-wrapper bot-wrapper">
             <div class="msg bot">
-                Namaste! Main **Voxa AI Pro** hoon. Main type karne ke sath-sath bol bhi sakta hoon aur sun bhi sakta hoon. Aaj kya help chahiye?
+                Namaste! Main <b>Voxa AI Pro</b> hoon. Main type karne ke sath-sath bol bhi sakta hoon aur sun bhi sakta hoon. Aaj kya help chahiye?
             </div>
         </div>
     </div>
@@ -83,13 +85,13 @@
     </div>
 
     <script>
-        // 🔑 Groq Key
+        // 🔑 Groq Key (apna real key daalo)
         const G_P1 = "gsk_PehleAadheKeyYahan"; 
         const G_P2 = "DoosreAadheKeyYahan";
 
-        // 🔑 Gemini Key
-        const GEM_P1 = "AQ.Ab8RN6K92tF-ZjlDu7P4KZuF"; 
-        const GEM_P2 = "Hd1y-I0hFuqyj1C_Fs0h6WOBZQ";
+        // 🔑 Gemini Key (apna real key daalo)
+        const GEM_P1 = "AQ.Ab8RN6Lr6abSCJ3xqNZjfyA74"; 
+        const GEM_P2 = "T8RdbKCIyKphM1Mj84JJi0lpg";
 
         const GROQ_KEY = G_P1 + G_P2;
         const GEMINI_KEY = GEM_P1 + GEM_P2;
@@ -127,11 +129,19 @@
 
             try {
                 let responseText = "";
+
                 if (model === "groq") {
+                    // ===== GROQ =====
                     let res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
                         method: "POST",
-                        headers: { "Authorization": `Bearer ${GROQ_KEY}`, "Content-Type": "application/json" },
-                        body: JSON.stringify({ model: "llama-3.3-70b-versatile", messages: [{ role: "user", content: text }] })
+                        headers: { 
+                            "Authorization": `Bearer ${GROQ_KEY}`, 
+                            "Content-Type": "application/json" 
+                        },
+                        body: JSON.stringify({ 
+                            model: "llama-3.3-70b-versatile", 
+                            messages: [{ role: "user", content: text }] 
+                        })
                     });
                     let data = await res.json();
                     if (data.error) {
@@ -140,11 +150,21 @@
                         responseText = data.choices?.[0]?.message?.content || "Groq Response Error!";
                     }
                 } else {
-                    // Gemini API Call (Fixed to gemini-2.0-flash)
-                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`, {
+                    // ===== GEMINI =====
+                    let modelName = "gemini-3.6-flash"; // default
+
+                    if (model === "gemini-3.5") {
+                        modelName = "gemini-3.5-flash";
+                    } else if (model === "gemini-lite") {
+                        modelName = "gemini-3.5-flash-lite";
+                    }
+
+                    let res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/\( {modelName}:generateContent?key= \){GEMINI_KEY}`, {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ contents: [{ parts: [{ text: text }] }] })
+                        body: JSON.stringify({ 
+                            contents: [{ parts: [{ text: text }] }] 
+                        })
                     });
 
                     let data = await res.json();
@@ -245,5 +265,4 @@
         }
     </script>
 </body>
-    </html>
-    
+</html>
