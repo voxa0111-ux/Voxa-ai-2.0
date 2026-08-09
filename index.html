@@ -83,18 +83,24 @@
     </div>
 
     <script>
-        // 🔑 GROQ API KEY (2 PARTS MEIN TOD KAR DAALEIN):
-        // Note: Groq Key 'gsk_' se start hoti hai
-        const G_P1 = "gsk_PehleAadheKeyYahan"; 
-        const G_P2 = "DoosreAadheKeyYahan";
+        // 🔑 Groq Key (console.groq.com se 'gsk_...' wali key lein)
+const G_P1 = "gsk_AapkiGroqKeyPart1"; 
+const G_P2 = "AapkiGroqKeyPart2";
 
-        // 🔑 GEMINI API KEY (2 PARTS MEIN TOD KAR DAALEIN):
-        // Note: Gemini Key 'AIzaSy' se start hoti hai!
+// 🔑 Gemini Key (aistudio.google.com se naye project mein banayein)  
         const GEM_P1 = "AQ.Ab8RN6K92tF-ZjlDu7P4KZuF"; 
         const GEM_P2 = "Hd1y-I0hFuqyj1C_Fs0h6WOBZQ";
 
-        const GROQ_KEY = G_P1 + G_P2;
-        const GEMINI_KEY = GEM_P1 + GEM_P2;
+const GROQ_KEY = G_P1 + G_P2;
+const GEMINI_KEY = GEM_P1 + GEM_P2;
+
+// ... send() function ke andar Gemini URL badlein:
+
+// 👇 PURANI GEMINI URL KI JAGAH YEH NAYI URL LAGAYEIN:
+let apiUrl = model === "groq" 
+    ? "https://api.groq.com/openai/v1/chat/completions" 
+    : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`;
+        
 
         // --- Send Message Logic ---
         async function send() {
